@@ -1,0 +1,41 @@
+services:
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: ./web
+        target: /web           # コードをbind mount（ホットリロード）
+      # - /app/node_modules         # node_modulesはコンテナ内
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - "4000:4000"
+    volumes:
+      - type: bind
+        source: ./api
+        target: /api           # コードをbind mount（ホットリロード）
+      # - /app/node_modules         # node_modulesはコンテナ内
+
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    tty: true
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-store:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: 'postgres'
+
+volumes:
+  db-store:
