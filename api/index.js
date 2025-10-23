@@ -4,10 +4,10 @@ const app = express();
 // PostgreSQLの設定
 const { Pool } = require('pg')
 const pool = new Pool({
-  user: 'postgres',
+  user: 'user',
   host: 'nextjs-express-postgres-docker-monorepo-db-1',
-  database: 'postgres',
-  password: 'postgres',
+  database: 'mydb',
+  password: 'password',
   port: 5432,
 })
 
