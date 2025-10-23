@@ -1,2 +1,2 @@
 # nextjs-express-postgres-docker-monorepo
-Dockerを使用したNext.js
+Docker上にNext.jsとExpressjsとPostgreSQLを構築する開発テンプレートです。

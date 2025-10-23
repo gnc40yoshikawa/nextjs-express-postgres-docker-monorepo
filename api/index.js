@@ -13,7 +13,7 @@ const pool = new Pool({
 
 // ルーティングの設定
 app.get('/', async(req, res) => {
-  const { rows } = await pool.query('select * from pg_tables')
+  const { rows } = await pool.query('select * from todos')
   res.send(rows)
 });
 

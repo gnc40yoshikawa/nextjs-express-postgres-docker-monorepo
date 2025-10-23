@@ -34,8 +34,11 @@ services:
       - "5432:5432"
     volumes:
       - db-store:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
     environment:
       POSTGRES_PASSWORD: 'postgres'
+      # 起動時・接続時に動的変更可能なためこちらで設定
+      TZ: Asia/Tokyo
 
 volumes:
   db-store:
