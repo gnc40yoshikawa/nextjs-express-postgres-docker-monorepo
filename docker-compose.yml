@@ -1,3 +1,8 @@
+networks:
+  app: {}                 # フロント（web, api が乗る）
+  backend:                # バックエンド（api, db が乗る。webは参加しない）
+    internal: true        # 外部（ホスト）へはルーティングされない
+
 services:
   web:
     build:
@@ -11,8 +16,8 @@ services:
         source: ./web
         target: /web           # コードをbind mount（ホットリロード）
       # - /app/node_modules         # node_modulesはコンテナ内
-    depends_on:
-      - api
+    networks: [app]             # ← web は app ネットワークのみ
+    depends_on: [api]
 
   api:
     build:
@@ -26,6 +31,9 @@ services:
         source: ./api
         target: /api           # コードをbind mount（ホットリロード）
       # - /app/node_modules         # node_modulesはコンテナ内
+    networks:
+      - app                    # ← web からの HTTP を受ける
+      - backend                # ← db とだけ直接通す
     depends_on:
       db:
         condition: service_healthy
@@ -46,6 +54,7 @@ services:
       POSTGRES_PASSWORD: password
       # 起動時・接続時に動的変更可能なためこちらで設定
       TZ: Asia/Tokyo
+    networks: [backend]         # ← backend のみ（web からは見えない）
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d mydb"]
       interval: 5s
