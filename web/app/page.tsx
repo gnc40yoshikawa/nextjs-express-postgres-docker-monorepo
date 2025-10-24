@@ -4,7 +4,7 @@ export default async function Home() {
 
   return (
     <div>
-      <h1>Message from Hello API</h1>
+      <h1>Message from Express.js API</h1>
       <p>{text}</p>
     </div>
   );

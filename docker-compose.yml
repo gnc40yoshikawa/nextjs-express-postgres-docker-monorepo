@@ -33,7 +33,7 @@ services:
       - type: bind
         source: ./web
         target: /web           # コードをbind mount（ホットリロード）
-      # - /app/node_modules         # node_modulesはコンテナ内
+      # - /web/node_modules         # node_modulesはコンテナ内
     networks: [app]             # ← web は app ネットワークのみ
     labels:
       - traefik.enable=true
@@ -53,7 +53,7 @@ services:
       - type: bind
         source: ./api
         target: /api           # コードをbind mount（ホットリロード）
-      # - /app/node_modules         # node_modulesはコンテナ内
+      # - /api/node_modules         # node_modulesはコンテナ内
     networks:
       - app                    # ← web からの HTTP を受ける
       - backend                # ← db とだけ直接通す
