@@ -1,3 +1,2 @@
-node_modules
-.next
-.git
+./.idea
+./node_modules

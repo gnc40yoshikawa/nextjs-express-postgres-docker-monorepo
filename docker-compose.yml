@@ -21,6 +21,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks: [edge, app]
+    depends_on: [web]
 
   web:
     build:
@@ -29,11 +30,19 @@ services:
     tty: true
     expose:
       - "3000"
+    develop:
+      watch:
+        - action: rebuild
+          path: package.json
+        - action: sync
+          path: ./web
+          target: /web
+          ignore:
+            - node_modules/
     volumes:
       - type: bind
         source: ./web
         target: /web           # コードをbind mount（ホットリロード）
-      # - /web/node_modules         # node_modulesはコンテナ内
     networks: [app]             # ← web は app ネットワークのみ
     labels:
       - traefik.enable=true
