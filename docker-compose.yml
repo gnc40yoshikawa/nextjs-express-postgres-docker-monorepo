@@ -43,12 +43,14 @@ services:
       - type: bind
         source: ./web
         target: /web           # コードをbind mount（ホットリロード）
-    networks: [app]             # ← web は app ネットワークのみ
+      - web-node-modules:/web/node_modules   # レンダリング時間短縮のためvolume mountに切り出し
+      - web-next:/web/.next   # レンダリング時間短縮のためvolume mountに切り出し
     labels:
       - traefik.enable=true
       - traefik.http.routers.web.rule=Host(`web.localhost`)
       - traefik.http.routers.web.entrypoints=web
       - traefik.http.services.web.loadbalancer.server.port=3000
+    networks: [app]             # ← web は app ネットワークのみ
     depends_on: [api]
 
   api:
@@ -63,14 +65,14 @@ services:
         source: ./api
         target: /api           # コードをbind mount（ホットリロード）
       # - /api/node_modules         # node_modulesはコンテナ内
-    networks:
-      - app                    # ← web からの HTTP を受ける
-      - backend                # ← db とだけ直接通す
     labels:
       - traefik.enable=true
       - traefik.http.routers.api.rule=Host(`api.localhost`)
       - traefik.http.routers.api.entrypoints=web
       - traefik.http.services.api.loadbalancer.server.port=4000
+    networks:
+      - app                    # ← web からの HTTP を受ける
+      - backend                # ← db とだけ直接通す
     depends_on:
       db:
         condition: service_healthy
@@ -100,3 +102,5 @@ services:
 
 volumes:
   db-store:
+  web-node-modules:
+  web-next:
