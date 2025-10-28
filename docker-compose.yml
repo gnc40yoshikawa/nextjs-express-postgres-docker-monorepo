@@ -64,7 +64,7 @@ services:
       - type: bind
         source: ./api
         target: /api           # コードをbind mount（ホットリロード）
-      # - /api/node_modules         # node_modulesはコンテナ内
+      - api-node-modules:/api/node_modules         # node_modulesはコンテナ内
     labels:
       - traefik.enable=true
       - traefik.http.routers.api.rule=Host(`api.localhost`)
@@ -83,7 +83,7 @@ services:
       dockerfile: Dockerfile
     tty: true
     expose:
-      - "5432"
+      - "5432"   #商用利用時は閉じる
     volumes:
       - db-store:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d:ro
@@ -104,3 +104,4 @@ volumes:
   db-store:
   web-node-modules:
   web-next:
+  api-node-modules:
