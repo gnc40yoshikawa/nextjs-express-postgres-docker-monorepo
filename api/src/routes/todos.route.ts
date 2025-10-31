@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { z } from "zod";
-import { registry } from "../docs/registry";
-import { validate } from "../middlewares/validate";
-import * as svc from "../services/todos.service";
-import { Todo, CreateTodoInput, UpdateTodoInput, ErrorResponse } from "../schemas/todo.schema";
+import { registry } from "../docs/registry.js";
+import { validate } from "../middlewares/validate.js";
+import * as svc from "../services/todos.service.js";
+import { Todo, CreateTodoInput, UpdateTodoInput, ErrorResponse } from "../schemas/todo.schema.js";
 
 const router = Router();
 

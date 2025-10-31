@@ -2,10 +2,10 @@ import express from "express";
 import cors from "cors";
 
 // 先にアプリのルート群を import（← これが大事）
-import todosRouter from "./routes/todos.route";
+import todosRouter from "./routes/todos.route.js";
 
-import { openapiRouter } from "./docs/openapi";
-import { errorHandler } from "./middlewares/error";
+import { openapiRouter } from "./docs/openapi.js";
+import { errorHandler } from "./middlewares/error.js";
 
 const app = express();
 app.use(cors());

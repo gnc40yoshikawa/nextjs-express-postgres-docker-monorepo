@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import * as svc from "../services/todos.service.ts";
+import type { Request, Response, NextFunction } from "express";
+import * as svc from "../services/todos.service.js";
 
 export async function index(_req: Request, res: Response, next: NextFunction) {
   try { res.json(await svc.listTodos()); } catch (e) { next(e); }
