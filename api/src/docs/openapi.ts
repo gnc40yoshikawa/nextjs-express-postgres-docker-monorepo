@@ -11,7 +11,7 @@ openapiRouter.get("/docs.json", (_req, res) => {
   const doc = generator.generateDocument({
     openapi: "3.0.3",
     info: { title: "Todo API", version: "1.0.0" },
-    servers: [{ url: "http://localhost:4000" }],
+    servers: [{ url: "http://api.localhost/" }],
   });
   res.json(doc);
 });
