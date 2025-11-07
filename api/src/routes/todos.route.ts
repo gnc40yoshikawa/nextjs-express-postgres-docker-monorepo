@@ -19,7 +19,7 @@ const IdParam = z.object({ id: z.coerce.number().int().min(1) }).openapi("IdPara
 // --- /api/todos
 registry.registerPath({
   method: "get",
-  path: "/api/todos",
+  path: "/todos",
   summary: "Todo一覧を取得",
   tags: ["Todos"],
   responses: { 200: { description: "OK", content: { "application/json": { schema: z.array(Todo) } } } }
@@ -51,7 +51,7 @@ router.get("/:id", async (req, res, next) => {
 // --- POST /api/todos
 registry.registerPath({
   method: "post",
-  path: "/api/todos",
+  path: "/todos",
   summary: "Todoを作成",
   tags: ["Todos"],
   request: { body: { required: true, content: { "application/json": { schema: CreateTodoInput } } } },

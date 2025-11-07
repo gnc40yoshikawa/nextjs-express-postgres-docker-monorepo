@@ -86,7 +86,6 @@ services:
       - "5432"   #商用利用時は閉じる
     volumes:
       - db-store:/var/lib/postgresql/data
-      - ./db/init:/docker-entrypoint-initdb.d:ro
     environment:
       POSTGRES_DB: mydb
       POSTGRES_USER: user

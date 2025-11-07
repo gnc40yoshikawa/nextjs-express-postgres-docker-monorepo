@@ -1,20 +1,22 @@
 import { pool } from "../libs/db.ts";
 import { CreateTodoInput, UpdateTodoInput } from "../schemas/todo.schema.ts";
+import { prisma } from "../libs/prisma.js";
 
 export async function listTodos() {
-  const { rows } = await pool.query("SELECT id, title, done FROM todos ORDER BY id");
-  return rows;
+  return prisma.todos.findMany({
+    orderBy: { id: "asc" },
+    select: { id: true, title: true, done: true },
+  });
 }
 export async function getTodo(id: number) {
   const { rows } = await pool.query("SELECT id, title, done FROM todos WHERE id=$1", [id]);
   return rows[0] ?? null;
 }
 export async function createTodo(input: CreateTodoInput) {
-  const { rows } = await pool.query(
-    "INSERT INTO todos (title, done) VALUES ($1, $2) RETURNING id, title, done",
-    [input.title, input.done ?? false]
-  );
-  return rows[0];
+  return prisma.todos.create({
+    data: { title: input.title, done: input.done ?? false },
+    select: { id: true, title: true, done: true },
+  });
 }
 export async function updateTodo(id: number, input: UpdateTodoInput) {
   const { rows } = await pool.query(
