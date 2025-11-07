@@ -9,6 +9,7 @@
   <img src="https://img.shields.io/badge/-React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
   <!-- バックエンドのフレームワーク一覧 -->
   <img src="https://img.shields.io/badge/-Express-181818.svg?logo=express&style=for-the-badge">
+  <img src="https://img.shields.io/badge/-Prisma-000000.svg?logo=prisma&style=for-the-badge">
   <!-- バックエンドの言語一覧 -->
   <img src="https://img.shields.io/badge/-TypeSript-3178c6.svg?logo=typescript&style=for-the-badge&logoColor=ffffff">
   <!-- ミドルウェア一覧 -->
@@ -35,6 +36,7 @@ Docker上にNext.jsとExpressjsとPostgreSQLを構築する開発テンプレー
 | --------------------- | ---------- |
 | TypeScript            | 5.9.3      |
 | Express               | 5.1.0      |
+| Prisma                | 6.19.0     |
 | PostgreSQL            | 18.0       |
 | Node.js               | 24.11.0    |
 | React                 | 19.2.0     |
