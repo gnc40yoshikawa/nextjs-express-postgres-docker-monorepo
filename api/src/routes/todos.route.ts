@@ -31,7 +31,7 @@ router.get("/", async (_req, res, next) => {
 // --- /api/todos/{id}
 registry.registerPath({
   method: "get",
-  path: "/api/todos/{id}",
+  path: "/todos/{id}",
   summary: "Todoを1件取得",
   tags: ["Todos"],
   request: { params: IdParam },
@@ -68,7 +68,7 @@ router.post("/", validate(CreateTodoInput), async (req, res, next) => {
 // --- PATCH /api/todos/{id}
 registry.registerPath({
   method: "patch",
-  path: "/api/todos/{id}",
+  path: "/todos/{id}",
   summary: "Todoを更新",
   tags: ["Todos"],
   request: {
@@ -92,7 +92,7 @@ router.patch("/:id", validate(UpdateTodoInput), async (req, res, next) => {
 // --- DELETE /api/todos/{id}
 registry.registerPath({
   method: "delete",
-  path: "/api/todos/{id}",
+  path: "/todos/{id}",
   summary: "Todoを削除",
   tags: ["Todos"],
   request: { params: IdParam },

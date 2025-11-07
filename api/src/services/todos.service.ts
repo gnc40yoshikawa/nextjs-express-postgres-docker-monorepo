@@ -1,31 +1,43 @@
-import { pool } from "../libs/db.ts";
 import { CreateTodoInput, UpdateTodoInput } from "../schemas/todo.schema.ts";
 import { prisma } from "../libs/prisma.js";
 
 export async function listTodos() {
   return prisma.todos.findMany({
     orderBy: { id: "asc" },
-    select: { id: true, title: true, done: true },
+    select: { id: true, title: true, done: true, createdAt: true, updatedAt: true },
   });
 }
 export async function getTodo(id: number) {
-  const { rows } = await pool.query("SELECT id, title, done FROM todos WHERE id=$1", [id]);
-  return rows[0] ?? null;
+  return prisma.todos.findUnique({
+    where: { id },
+    select: { id: true, title: true, done: true, createdAt: true, updatedAt: true },
+  });
 }
 export async function createTodo(input: CreateTodoInput) {
   return prisma.todos.create({
     data: { title: input.title, done: input.done ?? false },
-    select: { id: true, title: true, done: true },
+    select: { id: true, title: true, done: true, createdAt: true, updatedAt: false },
   });
 }
 export async function updateTodo(id: number, input: UpdateTodoInput) {
-  const { rows } = await pool.query(
-    "UPDATE todos SET title=COALESCE($2,title), done=COALESCE($3,done) WHERE id=$1 RETURNING id, title, done",
-    [id, input.title ?? null, input.done ?? null]
-  );
-  return rows[0] ?? null;
+  return prisma.todos.update({
+    where: { id },
+    data: {
+      title: input.title ?? undefined,
+      done: input.done ?? undefined,
+    },
+    select: { id: true, title: true, done: true, createdAt: true, updatedAt: true },
+  }).catch((e) => {
+    // id が存在しない場合は Prisma が例外を投げる
+    if ((e as any).code === "P2025") return null;
+    throw e;
+  });
 }
 export async function deleteTodo(id: number) {
-  const { rowCount } = await pool.query("DELETE FROM todos WHERE id=$1", [id]);
-  return rowCount > 0;
+  return prisma.todos.delete({ where: { id } })
+    .then(() => true)
+    .catch((e) => {
+      if ((e as any).code === "P2025") return false;
+      throw e;
+    });
 }

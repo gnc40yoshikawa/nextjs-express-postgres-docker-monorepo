@@ -14,16 +14,7 @@ app.use(express.json());
 
 app.get("/health", (_req, res) => res.send({ ok: true }));
 
-//app.use("/api/todos", todosRouter);
-app.get('/todos', async (_req, res) => {
-    const todos = await prisma.todos.findMany({ orderBy: { id: 'asc' } })
-    res.json(todos)
-  })
-
-app.post('/todos', async (req, res) => {
-    const todos = await prisma.todos.create({ data: { title: req.body.title ?? '' } })
-    res.status(201).json(todos)
-  })
+app.use("/todos", todosRouter);
 
 // 最後に /docs
 app.use("/docs", openapiRouter);
