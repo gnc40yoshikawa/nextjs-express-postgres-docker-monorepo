@@ -1,5 +1,5 @@
 export default async function Home() {
-  const res = await fetch("http://api:4000/api/todos/");
+  const res = await fetch("http://api:4000/todos/");
   const text = await res.text();
 
   return (
