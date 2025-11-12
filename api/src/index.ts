@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import { prisma } from './libs/prisma.js'
 
 // 先にアプリのルート群を import（← これが大事）
 import todosRouter from "./routes/todos.route.js";
@@ -21,6 +20,3 @@ app.use("/docs", openapiRouter);
 
 // エラーハンドラ
 app.use(errorHandler);
-
-const port = Number(process.env.PORT ?? 4000);
-app.listen(port, () => console.log(`API listening on http://localhost:${port}`));

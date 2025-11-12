@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { z } from "zod";
 import { registry } from "../docs/registry.js";
+import * as ctrl from "../controllers/todos.controller.js";
 import { validate } from "../middlewares/validate.js";
-import * as svc from "../services/todos.service.js";
 import { Todo, CreateTodoInput, UpdateTodoInput, ErrorResponse } from "../schemas/todo.schema.js";
 
 const router = Router();
@@ -24,9 +24,7 @@ registry.registerPath({
   tags: ["Todos"],
   responses: { 200: { description: "OK", content: { "application/json": { schema: z.array(Todo) } } } }
 });
-router.get("/", async (_req, res, next) => {
-  try { res.json(await svc.listTodos()); } catch (e) { next(e); }
-});
+router.get("/", ctrl.index);
 
 // --- /api/todos/{id}
 registry.registerPath({
@@ -40,13 +38,7 @@ registry.registerPath({
     404: { description: "Not found", content: { "application/json": { schema: ErrorResponse } } }
   }
 });
-router.get("/:id", async (req, res, next) => {
-  try {
-    const row = await svc.getTodo(Number(req.params.id));
-    if (!row) return res.status(404).json({ error: "Not found" });
-    res.json(row);
-  } catch (e) { next(e); }
-});
+router.get("/:id", ctrl.show);
 
 // --- POST /api/todos
 registry.registerPath({
@@ -60,10 +52,7 @@ registry.registerPath({
     400: { description: "Bad Request", content: { "application/json": { schema: ErrorResponse } } }
   }
 });
-router.post("/", validate(CreateTodoInput), async (req, res, next) => {
-  try { res.status(201).json(await svc.createTodo((req as any).validated)); }
-  catch (e) { next(e); }
-});
+router.post("/", validate(CreateTodoInput), ctrl.create);
 
 // --- PATCH /api/todos/{id}
 registry.registerPath({
@@ -81,13 +70,7 @@ registry.registerPath({
     404: { description: "Not found", content: { "application/json": { schema: ErrorResponse } } }
   }
 });
-router.patch("/:id", validate(UpdateTodoInput), async (req, res, next) => {
-  try {
-    const row = await svc.updateTodo(Number(req.params.id), (req as any).validated);
-    if (!row) return res.status(404).json({ error: "Not found" });
-    res.json(row);
-  } catch (e) { next(e); }
-});
+router.patch("/:id", validate(UpdateTodoInput), ctrl.update);
 
 // --- DELETE /api/todos/{id}
 registry.registerPath({
@@ -101,11 +84,6 @@ registry.registerPath({
     404: { description: "Not found", content: { "application/json": { schema: ErrorResponse } } }
   }
 });
-router.delete("/:id", async (req, res, next) => {
-  try {
-    const ok = await svc.deleteTodo(Number(req.params.id));
-    res.status(ok ? 204 : 404).send(ok ? undefined : { error: "Not found" });
-  } catch (e) { next(e); }
-});
+router.delete("/:id", ctrl.destroy);
 
 export default router;

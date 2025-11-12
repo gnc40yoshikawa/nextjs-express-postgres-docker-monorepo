@@ -1,14 +1,13 @@
-import type { ZodType } from "zod";
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from 'express';
+import { z } from 'zod';
 
-export const validate =
-  (schema: ZodType, from: "body" | "query" | "params" = "body") =>
-  (req: Request, _res: Response, next: NextFunction) => {
-    const result = schema.safeParse((req as any)[from]);
-    if (!result.success) {
-      next({ status: 400, message: result.error.flatten(issue => issue.message) });
-    } else {
-      (req as any).validated = result.data;
-      next();
-    }
+export type RequestWithValidated<T> = Request & { validated: T };
+
+export const validate = <TS extends z.ZodType>(
+  schema: TS
+): ((req: RequestWithValidated<z.output<TS>>, res: Response, next: NextFunction) => void) => {
+  return (req: Request, _res: Response, next: NextFunction) => {
+    (req as RequestWithValidated<z.output<TS>>).validated = schema.parse(req.body);
+    next();
   };
+};

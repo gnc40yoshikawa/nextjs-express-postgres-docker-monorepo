@@ -1,101 +1,159 @@
-// eslint.config.mts
-import { defineConfig, globalIgnores } from "eslint/config";
-//import nextVitals from "eslint-config-next/core-web-vitals";
-import globals from "globals";
-import tseslint from "typescript-eslint";
-import react from "eslint-plugin-react";
-import reactHooks from "eslint-plugin-react-hooks";
-import jsxA11y from "eslint-plugin-jsx-a11y";
-import type { Linter } from "eslint";
+/// <reference lib="es2022" />
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { defineConfig } from "eslint/config";
 
-// 型情報を使う Type-Checked ルールを有効にする場合、
-// ルートに tsconfig.eslint.json を置くのが安全です（extends で tsconfig.app を参照でもOK）。
-const typeAware: Linter.FlatConfig = {
-  languageOptions: {
-    parserOptions: {
-      // Type-Checked ルールに必要
-      // (tseslint v7+: "projectService: true" で複数プロジェクトにも対応しやすい)
-      projectService: true,
-      tsconfigRootDir: process.cwd(),
-      ecmaFeatures: { jsx: true },
-      sourceType: "module",
+export default (async () => {
+  const [
+    tseslint,
+    react,
+    reactHooks,
+    jsxA11y,
+    nextPlugin,
+    globalsMod,
+  ] = await Promise.all([
+    import("typescript-eslint"),
+    import("eslint-plugin-react"),
+    import("eslint-plugin-react-hooks"),
+    import("eslint-plugin-jsx-a11y"),
+    import("@next/eslint-plugin-next"),
+    import("globals"),
+  ]);
+
+  const globals = (globalsMod as any).default ?? globalsMod;
+  const cwd = process.cwd();
+
+  // 1) tseslint の type-aware プリセットから「rules だけ」抽出
+  const tsStrictArr = ((tseslint as any).configs.strictTypeChecked ?? []) as any[];
+  const tsStyleArr  = ((tseslint as any).configs.stylisticTypeChecked ?? []) as any[];
+  const strictRules = Object.assign({}, ...tsStrictArr.map((c) => c.rules ?? {}));
+  const styleRules  = Object.assign({}, ...tsStyleArr.map((c) => c.rules ?? {}));
+
+  // ベース（型不要の推奨）
+  const base = defineConfig([
+    ...(((tseslint as any).configs.recommended ?? []) as any[]),
+    {
+      name: "root-ignores",
+      ignores: [
+        "**/node_modules/**",
+        "**/.next/**",
+        "**/.turbo/**",
+        "**/dist/**",
+        "**/build/**",
+        "**/coverage/**",
+        "**/.prisma/**",
+        "**/prisma/migrations/**",
+        "**/docker/**",
+        "**/db/**",
+      ],
     },
-    globals: {
-      ...globals.browser,
-      ...globals.node,
+    {
+      name: "base-overrides",
+      files: ["**/*.{ts,tsx,js,jsx,mts,mjs,cjs}"],
+      languageOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        globals: { ...globals.node, ...globals.browser },
+        parserOptions: { tsconfigRootDir: cwd },
+      },
+      plugins: {
+        react: (react as any).default ?? (react as any),
+        "react-hooks": (reactHooks as any).default ?? (reactHooks as any),
+        "jsx-a11y": (jsxA11y as any).default ?? (jsxA11y as any),
+      },
+      settings: { react: { version: "detect" } },
+      rules: {
+        "react/jsx-boolean-value": ["warn", "never"],
+        "react/self-closing-comp": "warn",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        "jsx-a11y/alt-text": "warn",
+        "jsx-a11y/anchor-is-valid": "warn",
+        "jsx-a11y/no-autofocus": "off",
+        "no-console": ["warn", { allow: ["warn", "error"] }],
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+        ],
+        // ここでは type-aware ルールは入れない！
+      },
     },
-  },
-};
+  ]);
 
-// 共通ルール（TS/JS共通）
-const commonRules: Linter.RulesRecord = {
-  ...reactHooks.configs.recommended.rules,
-  ...jsxA11y.configs.recommended.rules,
-  "react/react-in-jsx-scope": "off", // Next.js では不要
-  "react/prop-types": "off", // TS なら不要
-  // 使っていない変数は警告。引数は先頭_なら許容
-  "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-};
-
-export default defineConfig([
-  // 1) Next.js の推奨（Core Web Vitals）
-  //...nextVitals,
-
-  // 2) TypeScript の推奨（非 type-checked）
-  ...tseslint.configs.recommended,
-
-  // 3) Type-Checked 版の推奨（型情報を使う厳しめルール）
-  //    例: any の濫用や不安全な型変換をより強く検出
-  ...tseslint.configs.recommendedTypeChecked.map((cfg) => ({
-    ...cfg,
-    ...typeAware,
-  })),
-
-  // 4) プロジェクト共通の設定・ルール
-  {
-    files: ["**/*.{ts,tsx,js,jsx}"],
-    plugins: {
-      react,
-      "react-hooks": reactHooks,
-      "jsx-a11y": jsxA11y,
+  // web: Next.js
+  const web = defineConfig([
+    {
+      name: "web-next",
+      files: ["web/**/*.{ts,tsx,js,jsx}"],
+      plugins: {
+        "@next/next": (nextPlugin as any).default ?? (nextPlugin as any),
+      },
+      rules: {
+        "@next/next/no-img-element": "warn",
+        "@next/next/no-sync-scripts": "warn",
+        "@next/next/no-html-link-for-pages": "off",
+        "@next/next/no-document-import-in-page": "off",
+        "@next/next/google-font-display": "warn",
+        "@next/next/google-font-preconnect": "warn",
+      },
     },
-    settings: {
-      // React バージョン警告の解消
-      react: { version: "detect" },
+    {
+      // ★ 型情報が必要なルールは TS のみ & project 指定
+      name: "web-type-aware",
+      files: ["web/**/*.{ts,tsx}"],
+      languageOptions: {
+        parserOptions: {
+          projectService: false,
+          project: ["./web/tsconfig.json"],
+          tsconfigRootDir: cwd,
+        },
+      },
+      rules: {
+        ...strictRules,
+        ...styleRules,
+        "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-misused-promises": [
+          "warn",
+          { checksVoidReturn: { attributes: false } },
+        ],
+      },
     },
-    rules: {
-      ...commonRules,
-      // Next.js の Link / 画像回りで誤検出が出る場合は個別に調整:
-      // "@next/next/no-img-element": "off",
+  ]);
+
+  // api: Express
+  const api = defineConfig([
+    {
+      name: "api-node",
+      files: ["api/**/*.{ts,tsx,js,jsx}"],
+      languageOptions: { globals: { ...globals.node } },
+      rules: {
+        "no-process-exit": "off",
+        "no-restricted-syntax": [
+          "warn",
+          { selector: "CallExpression[callee.name='eval']", message: "Avoid eval()." },
+        ],
+      },
     },
-  },
-
-  // 5) 無視パターン（Next のビルド成果物など）
-  globalIgnores([
-    "./web/.next/**",
-    "./web/out/**",
-    "./web/build/**",
-    "./web/next-env.d.ts",
-    // 任意で追加:
-    "./web/coverage/**",
-    "./web/dist/**",
-  ]),
-
-  // 6) 設定ファイルやスクリプトはゆるめに（必要に応じて）
-  {
-    files: ["**/*.{cjs,mjs,js,ts}"],
-    ignores: [
-      "./web/node_modules/**",
-    ],
-  },
-
-  // 7) テストコードは少し緩める例（Jest/Vitest等）
-  {
-    files: ["**/*.test.{ts,tsx,js,jsx}", "**/__tests__/**/*.{ts,tsx,js,jsx}"],
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/ban-ts-comment": "off",
-      "react/prop-types": "off",
+    {
+      // ★ 同様に TS のみ & project 指定
+      name: "api-type-aware",
+      files: ["api/**/*.{ts,tsx}"],
+      languageOptions: {
+        parserOptions: {
+          projectService: false,
+          project: ["./api/tsconfig.json"],
+          tsconfigRootDir: cwd,
+        },
+      },
+      rules: {
+        ...strictRules,
+        ...styleRules,
+        "@typescript-eslint/no-floating-promises": "warn",
+        "@typescript-eslint/require-await": "off",
+      },
     },
-  },
-]);
+  ]);
+
+  return defineConfig([...base, ...web, ...api]);
+})();
