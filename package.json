@@ -2,8 +2,8 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write ./**/src/**/*{tsx,ts,js}",
-    "format:check": "prettier --check ./**/src/**/*{tsx,ts,js}",
+    "format": "prettier --write ./**/src/**/*{tsx,ts,js,jsx}",
+    "format:check": "prettier --check ./**/src/**/*{tsx,ts,js,jsx}",
     "prepare": "husky install"
   },
   "lint-staged": {
