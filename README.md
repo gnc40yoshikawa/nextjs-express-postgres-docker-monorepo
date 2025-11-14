@@ -50,7 +50,7 @@ Docker上にNext.jsとExpressjsとPostgreSQLを構築する開発テンプレー
 ## 開発環境構築
 
 ### コンテナの作成と起動
-初回起動時：docker compose up -d --build<br>
+初回起動時：プロジェクトルートでnpm install後、docker compose up -d --build<br>
 ※ローカルでDBコンテナも使用する場合はAPIコンテナに入り、npx prisma migrate devを実行してください。<br>
 
 2回目以降：docker compose up -d
