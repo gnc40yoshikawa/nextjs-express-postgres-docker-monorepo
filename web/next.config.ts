@@ -1,8 +1,17 @@
 import type { NextConfig } from "next";
 
+type WebpackWatchOptions = {
+  poll?: number;
+  aggregateTimeout?: number;
+};
+type WebpackConfigLike = {
+  watchOptions?: WebpackWatchOptions;
+  // 必要なら他のプロパティも追加してOK
+};
+
 const nextConfig: NextConfig = {
   /* config options here */
-  webpack: (config, { dev }) => {
+  webpack: (config: WebpackConfigLike, { dev }): WebpackConfigLike => {
     if (dev) {
       config.watchOptions = {
         // イベント監視が不安定な環境向けにポーリングへ

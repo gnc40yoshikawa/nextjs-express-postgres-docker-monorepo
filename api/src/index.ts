@@ -20,3 +20,6 @@ app.use("/docs", openapiRouter);
 
 // エラーハンドラ
 app.use(errorHandler);
+
+const port = Number(process.env.PORT ?? 4000);
+app.listen(port);
