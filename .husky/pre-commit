@@ -3,10 +3,7 @@
 
 echo "🔍 Running pre-commit checks..."
 
-# ESLint でコードチェック
-npm run lint
-
-# Prettier でフォーマットチェック
-npm run format:check
+# 修正ファイルのみをESLintでコードチェック Prettierでフォーマットチェック
+npx lint-staged
 
 echo "✅ Pre-commit checks passed!"
