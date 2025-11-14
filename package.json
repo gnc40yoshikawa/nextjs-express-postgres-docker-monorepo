@@ -2,7 +2,8 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write ./**/src/**/*{tsx,ts,js}"
+    "format": "prettier --write ./**/src/**/*{tsx,ts,js}",
+    "format:check": "prettier --check ./**/src/**/*{tsx,ts,js}"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -11,6 +12,7 @@
     "@types/node": "^24.10.1",
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.1",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
