@@ -17,6 +17,10 @@ openapiRouter.get("/docs.json", (_req, res) => {
 });
 
 // Swagger UI には docs.json の URL を渡す
-openapiRouter.use("/", swaggerUi.serve, swaggerUi.setup(undefined, {
-  swaggerUrl: "/docs/docs.json",
-}));
+openapiRouter.use(
+  "/",
+  swaggerUi.serve,
+  swaggerUi.setup(undefined, {
+    swaggerUrl: "/docs/docs.json",
+  }),
+);

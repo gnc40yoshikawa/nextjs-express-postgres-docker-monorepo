@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 
-interface HttpErrorLike{
-  status?: unknown;      // 後で number に絞る
-  message?: unknown;     // 後で string に絞る
+interface HttpErrorLike {
+  status?: unknown; // 後で number に絞る
+  message?: unknown; // 後で string に絞る
   code?: unknown;
   details?: unknown;
 }
@@ -26,12 +26,18 @@ function pickStatus(e: unknown): number {
 
 function pickMessage(e: unknown): string {
   if (e instanceof ZodError) return "Validation error";
-  if (isHttpErrorLike(e) && typeof e.message === "string" && e.message) return e.message;
+  if (isHttpErrorLike(e) && typeof e.message === "string" && e.message)
+    return e.message;
   return "Internal Server Error";
 }
 
 /** 4 引数シグネチャは必須（err を unknown にするのがポイント） */
-export function errorHandler(err: unknown, _req: Request, res: Response, _next: NextFunction) {
+export function errorHandler(
+  err: unknown,
+  _req: Request,
+  res: Response,
+  _next: NextFunction,
+) {
   const status = pickStatus(err);
   const message = pickMessage(err);
 

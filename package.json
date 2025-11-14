@@ -1,7 +1,8 @@
 {
   "scripts": {
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write ./**/src/**/*{tsx,ts,js}"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -15,6 +16,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "globals": "^16.5.0",
     "jiti": "^2.6.1",
+    "prettier": "^3.6.2",
     "typescript-eslint": "^8.46.4"
   },
   "workspaces": [

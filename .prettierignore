@@ -1,0 +1,66 @@
+# -----------------------------
+# Node modules (全階層)
+# -----------------------------
+**/node_modules/**
+node_modules/
+
+# -----------------------------
+# Build 出力物（Next.js / Express / TypeScript）
+# -----------------------------
+**/.next/**
+**/out/**
+**/build/**
+**/dist/**
+.next/
+out/
+build/
+dist/
+
+# -----------------------------
+# TypeScript ビルド・キャッシュ
+# -----------------------------
+**/tsconfig.tsbuildinfo
+**/*.tsbuildinfo
+
+# -----------------------------
+# Storybook / Vitest / Turborepo 等
+# -----------------------------
+**/storybook-static/**
+storybook-static/
+**/.turbo/**
+.turbo/
+**/coverage/**
+coverage/
+
+# -----------------------------
+# Docker 関連
+# -----------------------------
+**/tmp/**
+tmp/
+
+# -----------------------------
+# Prisma
+# -----------------------------
+**/prisma/migrations/**
+**/prisma/generated/**
+prisma/migrations/
+prisma/generated/
+
+# -----------------------------
+# 環境変数
+# -----------------------------
+.env
+.env.*
+!env.example
+
+# -----------------------------
+# OSごとの不要ファイル
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# misc
+# -----------------------------
+**/logs/**
+logs/

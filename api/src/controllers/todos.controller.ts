@@ -1,7 +1,10 @@
 import type { Request, Response, NextFunction } from "express";
 import * as svc from "../services/todos.service.js";
 import type { RequestWithValidated } from "../middlewares/validate.js";
-import type { CreateTodoInputType, UpdateTodoInputType } from "../schemas/todo.schema.js";
+import type {
+  CreateTodoInputType,
+  UpdateTodoInputType,
+} from "../schemas/todo.schema.js";
 
 const toId = (s: string) => {
   const n = Number.parseInt(s, 10);
@@ -19,7 +22,8 @@ export async function index(_req: Request, res: Response, next: NextFunction) {
 export async function show(req: Request, res: Response, next: NextFunction) {
   try {
     const id = toId(req.params.id);
-    if (!Number.isFinite(id)) return res.status(400).json({ error: "Invalid id" });
+    if (!Number.isFinite(id))
+      return res.status(400).json({ error: "Invalid id" });
 
     const todo = await svc.getTodo(id);
     if (!todo) return res.status(404).json({ error: "Not found" });
@@ -32,7 +36,7 @@ export async function show(req: Request, res: Response, next: NextFunction) {
 export async function create(
   req: RequestWithValidated<CreateTodoInputType>,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const created = await svc.createTodo(req.validated);
@@ -45,11 +49,12 @@ export async function create(
 export async function update(
   req: RequestWithValidated<UpdateTodoInputType>,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
   try {
     const id = toId(req.params.id);
-    if (!Number.isFinite(id)) return res.status(400).json({ error: "Invalid id" });
+    if (!Number.isFinite(id))
+      return res.status(400).json({ error: "Invalid id" });
 
     const todo = await svc.updateTodo(id, req.validated);
     if (!todo) return res.status(404).json({ error: "Not found" });
@@ -62,7 +67,8 @@ export async function update(
 export async function destroy(req: Request, res: Response, next: NextFunction) {
   try {
     const id = toId(req.params.id);
-    if (!Number.isFinite(id)) return res.status(400).json({ error: "Invalid id" });
+    if (!Number.isFinite(id))
+      return res.status(400).json({ error: "Invalid id" });
 
     const ok = await svc.deleteTodo(id);
     res.status(ok ? 204 : 404).send(ok ? undefined : { error: "Not found" });

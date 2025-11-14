@@ -3,7 +3,12 @@ import { z } from "zod";
 import { registry } from "../docs/registry.js";
 import * as ctrl from "../controllers/todos.controller.js";
 import { validate } from "../middlewares/validate.js";
-import { Todo, CreateTodoInput, UpdateTodoInput, ErrorResponse } from "../schemas/todo.schema.js";
+import {
+  Todo,
+  CreateTodoInput,
+  UpdateTodoInput,
+  ErrorResponse,
+} from "../schemas/todo.schema.js";
 
 const router = Router();
 
@@ -14,7 +19,9 @@ registry.register("UpdateTodoInput", UpdateTodoInput);
 registry.register("ErrorResponse", ErrorResponse);
 
 // パスパラメータ
-const IdParam = z.object({ id: z.coerce.number().int().min(1) }).openapi("IdParam");
+const IdParam = z
+  .object({ id: z.coerce.number().int().min(1) })
+  .openapi("IdParam");
 
 // --- /api/todos
 registry.registerPath({
@@ -22,7 +29,12 @@ registry.registerPath({
   path: "/todos",
   summary: "Todo一覧を取得",
   tags: ["Todos"],
-  responses: { 200: { description: "OK", content: { "application/json": { schema: z.array(Todo) } } } }
+  responses: {
+    200: {
+      description: "OK",
+      content: { "application/json": { schema: z.array(Todo) } },
+    },
+  },
 });
 router.get("/", ctrl.index);
 
@@ -34,9 +46,15 @@ registry.registerPath({
   tags: ["Todos"],
   request: { params: IdParam },
   responses: {
-    200: { description: "OK", content: { "application/json": { schema: Todo } } },
-    404: { description: "Not found", content: { "application/json": { schema: ErrorResponse } } }
-  }
+    200: {
+      description: "OK",
+      content: { "application/json": { schema: Todo } },
+    },
+    404: {
+      description: "Not found",
+      content: { "application/json": { schema: ErrorResponse } },
+    },
+  },
 });
 router.get("/:id", ctrl.show);
 
@@ -46,11 +64,22 @@ registry.registerPath({
   path: "/todos",
   summary: "Todoを作成",
   tags: ["Todos"],
-  request: { body: { required: true, content: { "application/json": { schema: CreateTodoInput } } } },
+  request: {
+    body: {
+      required: true,
+      content: { "application/json": { schema: CreateTodoInput } },
+    },
+  },
   responses: {
-    201: { description: "Created", content: { "application/json": { schema: Todo } } },
-    400: { description: "Bad Request", content: { "application/json": { schema: ErrorResponse } } }
-  }
+    201: {
+      description: "Created",
+      content: { "application/json": { schema: Todo } },
+    },
+    400: {
+      description: "Bad Request",
+      content: { "application/json": { schema: ErrorResponse } },
+    },
+  },
 });
 router.post("/", validate(CreateTodoInput), ctrl.create);
 
@@ -62,13 +91,22 @@ registry.registerPath({
   tags: ["Todos"],
   request: {
     params: IdParam,
-    body: { content: { "application/json": { schema: UpdateTodoInput } } }
+    body: { content: { "application/json": { schema: UpdateTodoInput } } },
   },
   responses: {
-    200: { description: "OK", content: { "application/json": { schema: Todo } } },
-    400: { description: "Bad Request", content: { "application/json": { schema: ErrorResponse } } },
-    404: { description: "Not found", content: { "application/json": { schema: ErrorResponse } } }
-  }
+    200: {
+      description: "OK",
+      content: { "application/json": { schema: Todo } },
+    },
+    400: {
+      description: "Bad Request",
+      content: { "application/json": { schema: ErrorResponse } },
+    },
+    404: {
+      description: "Not found",
+      content: { "application/json": { schema: ErrorResponse } },
+    },
+  },
 });
 router.patch("/:id", validate(UpdateTodoInput), ctrl.update);
 
@@ -81,8 +119,11 @@ registry.registerPath({
   request: { params: IdParam },
   responses: {
     204: { description: "No Content" },
-    404: { description: "Not found", content: { "application/json": { schema: ErrorResponse } } }
-  }
+    404: {
+      description: "Not found",
+      content: { "application/json": { schema: ErrorResponse } },
+    },
+  },
 });
 router.delete("/:id", ctrl.destroy);
 

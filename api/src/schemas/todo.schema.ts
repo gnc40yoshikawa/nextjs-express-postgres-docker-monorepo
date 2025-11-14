@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { OpenAPIRegistry, extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
+import {
+  OpenAPIRegistry,
+  extendZodWithOpenApi,
+} from "@asteasolutions/zod-to-openapi";
 
 extendZodWithOpenApi(z);
 
@@ -7,28 +10,36 @@ extendZodWithOpenApi(z);
 export const todoRegistry = new OpenAPIRegistry();
 
 /** 共通エラーレスポンス（例） */
-export const ErrorResponse = z.object({
-  error: z.string(),
-}).openapi("ErrorResponse");
+export const ErrorResponse = z
+  .object({
+    error: z.string(),
+  })
+  .openapi("ErrorResponse");
 
 // Todo 本体
-export const Todo = z.object({
-  id: z.number().int().openapi({ example: 1 }),
-  title: z.string().min(1).openapi({ example: "buy milk" }),
-  done: z.boolean().openapi({ example: false }),
-}).openapi("Todo");
+export const Todo = z
+  .object({
+    id: z.number().int().openapi({ example: 1 }),
+    title: z.string().min(1).openapi({ example: "buy milk" }),
+    done: z.boolean().openapi({ example: false }),
+  })
+  .openapi("Todo");
 
 // 作成
-export const CreateTodoInput = z.object({
-  title: z.string().min(1),
-  done: z.boolean().optional().default(false),
-}).openapi("CreateTodoInput");
+export const CreateTodoInput = z
+  .object({
+    title: z.string().min(1),
+    done: z.boolean().optional().default(false),
+  })
+  .openapi("CreateTodoInput");
 
 // 更新
-export const UpdateTodoInput = z.object({
-  title: z.string().min(1).optional(),
-  done: z.boolean().optional(),
-}).openapi("UpdateTodoInput");
+export const UpdateTodoInput = z
+  .object({
+    title: z.string().min(1).optional(),
+    done: z.boolean().optional(),
+  })
+  .openapi("UpdateTodoInput");
 
 // OpenAPI の components に載せたいスキーマを registry に登録
 todoRegistry.register("Todo", Todo);
